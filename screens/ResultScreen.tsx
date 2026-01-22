@@ -1,9 +1,49 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AppRoute } from '../types';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AppRoute, AIAnalysisResult, MealType } from '../types';
+import { useAppContext } from '../context/AppContext';
+
+interface LocationState {
+    image: string;
+    analysis: AIAnalysisResult;
+}
 
 export default function ResultScreen() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { addLog } = useAppContext();
+  
+  const state = location.state as LocationState;
+
+  // Fallback if accessed directly (should handle better in prod)
+  if (!state) {
+      navigate(`/${AppRoute.HOME}`);
+      return null;
+  }
+
+  const { image, analysis } = state;
+
+  const handleSave = () => {
+      // Determine meal type based on time
+      const hour = new Date().getHours();
+      let mealType: MealType = 'Snack';
+      if (hour >= 6 && hour < 11) mealType = 'Breakfast';
+      else if (hour >= 11 && hour < 16) mealType = 'Lunch';
+      else if (hour >= 16 && hour < 22) mealType = 'Dinner';
+
+      addLog({
+          name: analysis.foodName,
+          calories: analysis.calories,
+          protein: analysis.protein,
+          carbs: analysis.carbs,
+          fat: analysis.fat,
+          portionSize: analysis.portionSize,
+          mealType: mealType,
+          image: image
+      });
+
+      navigate(`/${AppRoute.HOME}`);
+  };
 
   return (
     <div className="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden bg-bg-light dark:bg-bg-dark pb-24">
@@ -27,7 +67,7 @@ export default function ResultScreen() {
                 <div 
                     className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl bg-gray-200 shadow-sm"
                     style={{ 
-                        backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuB9J9cEp714DdvncMEwqOP2laR8zBuM_fwjHyxQoCaXHKP6Mx75v4vwpQG3vn1p6j2U3OYX22eymvGrrLGmuinQq5boP5Im6HrFtOJPB2-4cLDPSnUafTygPd3BAwHXLTx5n9_VMFQ6sYn3XlqN3l4ml3RVqAp50OWPlTUUSkBWC44-Mi_HY2LmdV7LSpbEtW6s0meiKajv-AmUe9I3cE5u3HY_8V4eWzPwznXdvymSOH-QcqmbGA3swiwcJ93TCLmmcVQ-O6FEwho')`,
+                        backgroundImage: `url(${image})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center'
                     }}
@@ -38,8 +78,8 @@ export default function ResultScreen() {
 
             {/* Title Info */}
             <div className="text-center">
-                <h1 className="text-3xl font-extrabold tracking-tight text-[#121b0e] dark:text-white">牛油果鸡肉沙拉</h1>
-                <p className="mt-1 text-sm font-medium text-gray-500 dark:text-gray-400">碗装 • 350克</p>
+                <h1 className="text-3xl font-extrabold tracking-tight text-[#121b0e] dark:text-white">{analysis.foodName}</h1>
+                <p className="mt-1 text-sm font-medium text-gray-500 dark:text-gray-400">{analysis.portionSize}</p>
             </div>
 
             {/* Main Card */}
@@ -48,22 +88,20 @@ export default function ResultScreen() {
                     <div className="flex flex-1 flex-col justify-center">
                         <span className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">总热量</span>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-5xl font-extrabold tracking-tight text-brand-sage">420</span>
+                            <span className="text-5xl font-extrabold tracking-tight text-brand-sage">{analysis.calories}</span>
                             <span className="text-xl font-bold text-brand-sage/70">kcal</span>
                         </div>
                         <p className="mt-2 text-sm font-medium leading-normal text-gray-600 dark:text-gray-300">
-                            符合您的每日午餐目标。
+                           {analysis.calories > 500 ? "这是一顿丰盛的餐点。" : "健康轻食，继续保持！"}
                         </p>
                     </div>
-                    {/* Donut Chart */}
+                    {/* Donut Chart (Dynamically calculated visualization) */}
                     <div className="relative flex size-32 shrink-0 items-center justify-center">
                         <svg className="size-full -rotate-90" viewBox="0 0 36 36">
                             <path className="text-gray-200 dark:text-gray-700" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5"></path>
-                            {/* Fat - Yellow */}
+                            {/* Simple approximation for visuals based on static ratios for now to keep it clean */}
                             <path className="text-brand-accent-yellow" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="20, 100" strokeWidth="3.5"></path>
-                            {/* Carbs - Light Green */}
                             <path className="text-brand-sage-light" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="45, 100" strokeDashoffset="-20" strokeWidth="3.5"></path>
-                            {/* Protein - Main Green */}
                             <path className="text-brand-sage" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="35, 100" strokeDashoffset="-65" strokeWidth="3.5"></path>
                         </svg>
                         <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -92,21 +130,21 @@ export default function ResultScreen() {
             <div className="grid grid-cols-3 gap-3">
                 <div className="flex flex-col items-center justify-center rounded-2xl bg-brand-sage/10 p-4 text-center">
                     <span className="mb-1 text-xs font-bold uppercase tracking-wide text-brand-sage">蛋白质</span>
-                    <span className="text-xl font-bold text-[#121b0e] dark:text-white">35g</span>
+                    <span className="text-xl font-bold text-[#121b0e] dark:text-white">{analysis.protein}g</span>
                     <div className="mt-2 h-1 w-8 rounded-full bg-brand-sage/20">
                         <div className="h-full w-3/4 rounded-full bg-brand-sage"></div>
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-center rounded-2xl bg-[#ebf3e7] dark:bg-[#2c3327] p-4 text-center">
                     <span className="mb-1 text-xs font-bold uppercase tracking-wide text-brand-sage-light">碳水</span>
-                    <span className="text-xl font-bold text-[#121b0e] dark:text-white">42g</span>
+                    <span className="text-xl font-bold text-[#121b0e] dark:text-white">{analysis.carbs}g</span>
                     <div className="mt-2 h-1 w-8 rounded-full bg-brand-sage-light/20">
                         <div className="h-full w-1/2 rounded-full bg-brand-sage-light"></div>
                     </div>
                 </div>
                 <div className="flex flex-col items-center justify-center rounded-2xl bg-[#fff9e0] dark:bg-[#332f20] p-4 text-center">
                     <span className="mb-1 text-xs font-bold uppercase tracking-wide text-[#d4af37]">脂肪</span>
-                    <span className="text-xl font-bold text-[#121b0e] dark:text-white">12g</span>
+                    <span className="text-xl font-bold text-[#121b0e] dark:text-white">{analysis.fat}g</span>
                     <div className="mt-2 h-1 w-8 rounded-full bg-[#d4af37]/20">
                         <div className="h-full w-1/4 rounded-full bg-[#d4af37]"></div>
                     </div>
@@ -121,14 +159,14 @@ export default function ResultScreen() {
                     </div>
                     <p className="text-sm font-medium text-gray-600 dark:text-gray-300">AI 识别可信度</p>
                 </div>
-                <span className="text-sm font-bold text-brand-sage">98%</span>
+                <span className="text-sm font-bold text-brand-sage">{analysis.confidence || 95}%</span>
             </div>
         </main>
 
         {/* Bottom CTA */}
         <div className="fixed bottom-0 left-0 w-full bg-gradient-to-t from-bg-light via-bg-light to-transparent px-5 pb-8 pt-12 dark:from-bg-dark dark:via-bg-dark z-40">
             <button 
-                onClick={() => navigate(`/${AppRoute.HOME}`)}
+                onClick={handleSave}
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-sage px-6 py-4 text-base font-bold text-white shadow-lg shadow-brand-sage/30 transition-transform active:scale-[0.98]"
             >
                 <span className="material-symbols-outlined">add_circle</span>

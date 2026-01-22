@@ -7,9 +7,10 @@ import ResultScreen from './screens/ResultScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import BottomNav from './components/BottomNav';
 import { AppRoute } from './types';
+import { AppProvider } from './context/AppContext';
 
 // Wrapper to conditionally render bottom nav
-const Layout = ({ children }: { children?: React.ReactNode }) => {
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const hideNavRoutes = ['/', '/scan', '/result'];
   const showNav = !hideNavRoutes.includes(location.pathname);
@@ -26,16 +27,18 @@ const Layout = ({ children }: { children?: React.ReactNode }) => {
 
 export default function App() {
   return (
-    <HashRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<SplashScreen />} />
-          <Route path={`/${AppRoute.HOME}`} element={<HomeScreen />} />
-          <Route path={`/${AppRoute.SCAN}`} element={<CameraScreen />} />
-          <Route path={`/${AppRoute.RESULT}`} element={<ResultScreen />} />
-          <Route path={`/${AppRoute.PROFILE}`} element={<ProfileScreen />} />
-        </Routes>
-      </Layout>
-    </HashRouter>
+    <AppProvider>
+      <HashRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<SplashScreen />} />
+            <Route path={`/${AppRoute.HOME}`} element={<HomeScreen />} />
+            <Route path={`/${AppRoute.SCAN}`} element={<CameraScreen />} />
+            <Route path={`/${AppRoute.RESULT}`} element={<ResultScreen />} />
+            <Route path={`/${AppRoute.PROFILE}`} element={<ProfileScreen />} />
+          </Routes>
+        </Layout>
+      </HashRouter>
+    </AppProvider>
   );
 }

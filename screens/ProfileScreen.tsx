@@ -1,8 +1,17 @@
 import React from 'react';
+import { useAppContext } from '../context/AppContext';
 
 export default function ProfileScreen() {
+    const { getTodayStats } = useAppContext();
+    const stats = getTodayStats();
+    
     // Generate calendar days
     const days = Array.from({ length: 31 }, (_, i) => i + 1);
+    
+    // Macros max values (approximate)
+    const MAX_PROTEIN = 140;
+    const MAX_CARBS = 250;
+    const MAX_FAT = 70;
 
     return (
         <div className="flex flex-col w-full h-full pb-32">
@@ -94,19 +103,27 @@ export default function ProfileScreen() {
                 </div>
             </section>
 
-            {/* Daily Summary */}
+            {/* Daily Summary (Real Data) */}
             <section className="px-4">
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3 ml-1">10月5日小结</h3>
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-3 ml-1">今日小结</h3>
                 <div className="bg-surface-light dark:bg-surface-dark rounded-3xl p-5 shadow-soft border border-sage-100 dark:border-white/5">
                     <div className="flex items-center gap-6">
                         <div className="relative w-24 h-24 flex-shrink-0">
                             <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                                 <path className="text-gray-100 dark:text-white/5" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3.5"></path>
-                                <path className="text-brand-green drop-shadow-[0_0_2px_rgba(93,230,25,0.5)]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeDasharray="75, 100" strokeLinecap="round" strokeWidth="3.5"></path>
+                                <path 
+                                    className="text-brand-green drop-shadow-[0_0_2px_rgba(93,230,25,0.5)]" 
+                                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    strokeDasharray={`${(stats.consumed / stats.target) * 100}, 100`}
+                                    strokeLinecap="round" 
+                                    strokeWidth="3.5"
+                                ></path>
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                                 <span className="text-[8px] font-bold uppercase text-brand-sage tracking-wide">总计</span>
-                                <span className="text-lg font-bold text-slate-900 dark:text-white leading-none">1,850</span>
+                                <span className="text-lg font-bold text-slate-900 dark:text-white leading-none">{stats.consumed}</span>
                                 <span className="text-[9px] text-gray-400 font-medium">千卡</span>
                             </div>
                         </div>
@@ -115,30 +132,30 @@ export default function ProfileScreen() {
                             <div className="flex flex-col gap-1.5">
                                 <div className="flex justify-between items-end text-xs">
                                     <span className="font-medium text-slate-900 dark:text-gray-200">蛋白质</span>
-                                    <span className="font-bold text-slate-900 dark:text-white">120g <span className="text-gray-400 font-normal">/ 140g</span></span>
+                                    <span className="font-bold text-slate-900 dark:text-white">{stats.protein}g <span className="text-gray-400 font-normal">/ {MAX_PROTEIN}g</span></span>
                                 </div>
                                 <div className="w-full h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-brand-sage rounded-full" style={{ width: '85%' }}></div>
+                                    <div className="h-full bg-brand-sage rounded-full" style={{ width: `${Math.min(100, (stats.protein/MAX_PROTEIN)*100)}%` }}></div>
                                 </div>
                             </div>
                              {/* Carbs Bar */}
                              <div className="flex flex-col gap-1.5">
                                 <div className="flex justify-between items-end text-xs">
                                     <span className="font-medium text-slate-900 dark:text-gray-200">碳水</span>
-                                    <span className="font-bold text-slate-900 dark:text-white">200g <span className="text-gray-400 font-normal">/ 250g</span></span>
+                                    <span className="font-bold text-slate-900 dark:text-white">{stats.carbs}g <span className="text-gray-400 font-normal">/ {MAX_CARBS}g</span></span>
                                 </div>
                                 <div className="w-full h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#E6C919] rounded-full" style={{ width: '80%' }}></div>
+                                    <div className="h-full bg-[#E6C919] rounded-full" style={{ width: `${Math.min(100, (stats.carbs/MAX_CARBS)*100)}%` }}></div>
                                 </div>
                             </div>
                              {/* Fat Bar */}
                              <div className="flex flex-col gap-1.5">
                                 <div className="flex justify-between items-end text-xs">
                                     <span className="font-medium text-slate-900 dark:text-gray-200">脂肪</span>
-                                    <span className="font-bold text-slate-900 dark:text-white">60g <span className="text-gray-400 font-normal">/ 70g</span></span>
+                                    <span className="font-bold text-slate-900 dark:text-white">{stats.fat}g <span className="text-gray-400 font-normal">/ {MAX_FAT}g</span></span>
                                 </div>
                                 <div className="w-full h-2 bg-gray-100 dark:bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-[#E69119] rounded-full" style={{ width: '85%' }}></div>
+                                    <div className="h-full bg-[#E69119] rounded-full" style={{ width: `${Math.min(100, (stats.fat/MAX_FAT)*100)}%` }}></div>
                                 </div>
                             </div>
                         </div>

@@ -6,15 +6,36 @@ export enum AppRoute {
   PROFILE = 'profile'
 }
 
-export interface Meal {
-  type: 'Breakfast' | 'Lunch' | 'Dinner';
+export type MealType = 'Breakfast' | 'Lunch' | 'Dinner' | 'Snack';
+
+export interface FoodLog {
+  id: string;
+  name: string;
   calories: number;
-  icon: string;
+  protein: number;
+  carbs: number;
+  fat: number;
+  portionSize: string;
+  timestamp: number;
+  mealType: MealType;
+  image?: string; // base64
 }
 
 export interface DailyStats {
-  remaining: number;
   target: number;
   consumed: number;
-  meals: Meal[];
+  remaining: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+export interface AIAnalysisResult {
+  foodName: string;
+  portionSize: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  confidence: number;
 }
