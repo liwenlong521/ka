@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>CalorieAI</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "brand-green": "#5de619",
+              "brand-sage": "#658c49",
+              "brand-sage-light": "#8db370",
+              "brand-sage-dark": "#3a4f32",
+              "brand-yellow": "#f4d125",
+              "brand-cream": "#fef9c3",
+              "brand-accent-yellow": "#f4e08a",
+              "bg-light": "#f6f8f6",
+              "bg-dark": "#121b0e",
+              "surface-light": "#ffffff",
+              "surface-dark": "#1e2b18",
+              "sage-50": "#f4f7f3",
+              "sage-100": "#e3ebe1",
+              "sage-200": "#c4daba",
+            },
+            fontFamily: {
+              display: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+              body: ["Noto Sans SC", "sans-serif"],
+              mono: ["Space Grotesk", "monospace"],
+            },
+            boxShadow: {
+              'soft': '0 20px 40px -10px rgba(93, 230, 25, 0.15)',
+              'fab': '0 8px 30px rgba(93, 230, 25, 0.25)',
+            },
+            animation: {
+              'float': 'float 6s ease-in-out infinite',
+              'pulse-sage': 'pulse-sage 3s infinite ease-in-out',
+              'scan': 'scan 2s ease-in-out infinite',
+            },
+            keyframes: {
+              float: {
+                '0%': { transform: 'translateY(0px)' },
+                '50%': { transform: 'translateY(-10px)' },
+                '100%': { transform: 'translateY(0px)' },
+              },
+              'pulse-sage': {
+                '0%, 100%': { boxShadow: '0 0 15px rgba(156, 175, 136, 0.4)' },
+                '50%': { boxShadow: '0 0 25px rgba(156, 175, 136, 0.8)' },
+              },
+              scan: {
+                '0%, 100%': { top: '0%' },
+                '50%': { top: '100%' },
+              }
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        /* Mobile app feel */
+        overscroll-behavior-y: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .material-symbols-filled {
+        font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.12.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-bg-light dark:bg-bg-dark text-slate-900 dark:text-white">
+    <div id="root"></div>
+  </body>
+</html>
